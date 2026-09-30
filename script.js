@@ -1,3 +1,24 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB6e3RBx6m8TFU5h9MFugZAf2wAAeEWw6s",
+  authDomain: 'fir-messenger-11acc.firebaseapp.com',
+  projectId: 'fir-messenger-11acc',
+  storageBucket: 'fir-messenger-11acc.firebasestorage.app',
+  messagingSenderId: '751001424564',
+  appId: '1:751001424564:web:f67643d1bff1fe44f37de1',
+  measurementId: 'G-F4EDXG47S2',
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const firestore = getFirestore(firebaseApp);
+const messagesCollection = collection(firestore, 'messages');
 const messages = [];
 
 const form = document.querySelector('#message-form');
@@ -5,7 +26,9 @@ const input = document.querySelector('#message-input');
 const chatArea = document.querySelector('#chat-area');
 const characterCount = document.querySelector('#character-count');
 const sendButton = document.querySelector('[data-testid="button-send"]');
+const sendButtonLabel = sendButton.querySelector('span');
 const dateLabel = document.querySelector('[data-testid="text-date"]');
+let isSaving = false;
 
 const formatTime = (date) =>
   new Intl.DateTimeFormat('ko-KR', {
@@ -26,7 +49,7 @@ dateLabel.textContent = formatDate(new Date());
 function updateComposerState() {
   const length = input.value.length;
   characterCount.textContent = `${length} / 500`;
-  sendButton.disabled = input.value.trim().length === 0;
+  sendButton.disabled = input.value.trim().length === 0 || isSaving;
 }
 
 function renderMessages() {
@@ -80,25 +103,41 @@ function renderMessages() {
   });
 }
 
-function sendMessage() {
+async function sendMessage() {
   const text = input.value.trim();
-  if (!text) {
+  if (!text || isSaving) {
     updateComposerState();
     input.focus();
     return;
   }
 
-  messages.push({
-    id: `${Date.now()}-${messages.length}`,
-    text,
-    createdAt: new Date(),
-  });
-
-  input.value = '';
-  input.style.height = 'auto';
+  isSaving = true;
+  sendButtonLabel.textContent = '저장 중...';
   updateComposerState();
-  renderMessages();
-  input.focus();
+
+  try {
+    const messageDocument = await addDoc(messagesCollection, {
+      text,
+      createdAt: serverTimestamp(),
+    });
+
+    messages.push({
+      id: messageDocument.id,
+      text,
+      createdAt: new Date(),
+    });
+
+    input.value = '';
+    input.style.height = 'auto';
+    renderMessages();
+  } catch (error) {
+    console.error('Firestore 메시지 저장 실패:', error);
+  } finally {
+    isSaving = false;
+    sendButtonLabel.textContent = '보내기';
+    updateComposerState();
+    input.focus();
+  }
 }
 
 form.addEventListener('submit', (event) => {
