@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messenger</title>
+    <meta name="description" content="짧은 이야기를 나누는 작은 메신저" />
+    <meta name="theme-color" content="#101b33" />
+    <meta property="og:title" content="Messenger" />
+    <meta property="og:description" content="짧은 이야기를 나누는 작은 메신저" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app-shell" data-testid="messenger-app">
+      <section class="messenger-window" aria-labelledby="messenger-title">
+        <header class="topbar">
+          <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true">
+              <span></span>
+              <span></span>
+            </div>
+            <div>
+              <p class="eyebrow">PRIVATE SPACE</p>
+              <h1 id="messenger-title">Messenger</h1>
+            </div>
+          </div>
+          <div class="presence" data-testid="status-online">
+            <span class="presence-dot" aria-hidden="true"></span>
+            <span>온라인</span>
+          </div>
+        </header>
+
+        <div class="conversation-head">
+          <div>
+            <p class="conversation-kicker">오늘의 대화</p>
+            <h2>작은 이야기를 남겨보세요</h2>
+          </div>
+          <p class="conversation-date" data-testid="text-date"></p>
+        </div>
+
+        <div
+          class="chat-area"
+          id="chat-area"
+          data-testid="chat-area"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          tabindex="0"
+        >
+          <div class="empty-state" data-testid="empty-state">
+            <div class="empty-symbol" aria-hidden="true">+</div>
+            <p class="empty-title">아직 메시지가 없어요</p>
+            <p class="empty-description">오늘 마음에 남은 말을<br />첫 메시지로 시작해보세요.</p>
+          </div>
+        </div>
+
+        <form class="composer" id="message-form" data-testid="message-form">
+          <label class="sr-only" for="message-input">메시지 입력</label>
+          <textarea
+            id="message-input"
+            class="message-input"
+            data-testid="input-message"
+            rows="1"
+            maxlength="500"
+            placeholder="메시지를 입력하세요"
+            autocomplete="off"
+            spellcheck="false"
+          ></textarea>
+          <div class="composer-actions">
+            <span class="character-count" id="character-count" data-testid="text-character-count">0 / 500</span>
+            <button class="send-button" type="submit" data-testid="button-send" aria-label="메시지 보내기">
+              <span>보내기</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m5 12 14-7-4.5 14-2.7-5.3L5 12Zm0 0 6.8 1.7L19 5"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <p class="keyboard-hint"><kbd>Enter</kbd>로 보내기 <span aria-hidden="true">·</span> <kbd>Shift + Enter</kbd>로 줄바꿈</p>
+      </section>
+    </main>
+    <script type="module" src="/script.js"></script>
+  </body>
+</html>
